@@ -1,5 +1,7 @@
 require 'singly_linked_list.rb'
 
+#reverse a linked list
+
 def create_list
   list = SinglyLinkedList.new
   list.insert_at_start 1
