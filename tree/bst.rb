@@ -1,15 +1,16 @@
 require 'tnode.rb'
 class BST
+  attr_accessor :root
   
   def initialize
-    @root = TNode.new
+    @root = nil
   end
 
   def insert data
-    if !@root.data
-      @root.data = data
-    else
-      new_node = TNode.new data
+    new_node = TNode.new data
+    if !@root
+      @root = new_node
+    else     
       temp = @root
       while temp
         if data < temp.data
@@ -21,18 +22,13 @@ class BST
     end
   end
 
+  def delete data
+    @root = delete_helper @root,data
+  end
+
   def in_order 
     in_order_helper @root
     puts
-  end
-
-  def in_order_helper node
-    if !node
-      return
-    end
-    in_order_helper node.left
-    print "#{node.data} "
-    in_order_helper node.right
   end
 
   def pre_order 
@@ -40,30 +36,16 @@ class BST
     puts
   end
 
-  def pre_order_helper node
-    if !node
-      return
-    end
-    pre_order_helper node.left
-    print "#{node.data} "
-    pre_order_helper node.right
-  end
-
   def post_order 
     post_order_helper @root
     puts
   end
 
-  def post_order_helper node
-    if !node
+  def level_order
+    if !@root
+      puts "Tree is empty"
       return
     end
-    post_order_helper node.left
-    post_order_helper node.right
-    print "#{node.data} "
-  end
-
-  def level_order
     queue = []
     queue << @root
     queue << nil
@@ -80,17 +62,84 @@ class BST
         puts
       end
     end
+    puts
+  end
+
+  def min
+    find_min @root
+  end
+
+  def max
+    find_max @root
+  end
+
+
+  private
+
+  def in_order_helper node
+    if !node
+      return
+    end
+    in_order_helper node.left
+    print "#{node.data} "
+    in_order_helper node.right
+  end
+
+  def pre_order_helper node
+    if !node
+      return
+    end
+    pre_order_helper node.left
+    print "#{node.data} "
+    pre_order_helper node.right
+  end
+
+  def post_order_helper node
+    if !node
+      return
+    end
+    post_order_helper node.left
+    post_order_helper node.right
+    print "#{node.data} "
+  end
+
+  def delete_helper node,data
+    if !node
+      return nil
+    end
+
+    if node.data == data
+      if !node.left && !node.right
+        return nil
+      elsif (node.left && !node.right)
+        return node.left
+      elsif (!node.left && node.right)
+        return node.right
+      else
+        min = find_min(node.right)
+        node.data = min.data
+        node.right = delete_helper node.right,min.data
+        return node
+      end
+    else
+      node.left = delete_helper node.left,data
+      node.right = delete_helper node.right,data
+    end
+    node
+  end
+
+  def find_min node
+    while node && node.left
+      node = node.left
+    end
+    node
+  end
+
+  def find_max node
+    while node && node.right
+      node = node.right
+    end
+    node
   end
 
 end
-
-tree = BST.new
-tree.insert 4
-tree.insert 2
-tree.insert 3
-tree.insert 6
-tree.insert 5
-tree.in_order
-tree.pre_order
-tree.post_order
-tree.level_order

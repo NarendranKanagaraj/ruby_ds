@@ -1,40 +1,50 @@
 require 'snode.rb'
 class SinglyLinkedList
+  attr_accessor :root
   
   def initialize
-    @root = SNode.new
+    @root = nil
   end
 
   def insert_at_start data
-    temp = @root.next_link
-    new_node= SNode.new data
-    @root.next_link = new_node
-    new_node.next_link = temp
+    new_node = SNode.new data
+    if !@root
+      @root = new_node
+    else
+      temp = @root.next_link
+      @root.next_link = new_node
+      new_node.next_link = temp
+    end
   end
 
-  def insert_at_end data
-    temp = @root
-    new_node= SNode.new data
-    while temp.next_link
-      temp = temp.next_link
+  def insert_at_end data   
+    new_node = SNode.new data
+    if !@root
+      @root = new_node
+    else
+      temp = @root
+      while temp.next_link
+        temp = temp.next_link
+      end
+      temp.next_link = new_node
     end
-    temp.next_link = new_node
   end
 
   def delete data
     temp = @root
-    prev = temp
-    while temp.next_link
+    prev = nil
+    while temp
       if temp.data == data
-        prev.next_link = temp.next_link
+        prev ? prev.next_link = temp.next_link : @root = nil
+      else
+        prev = temp
+        temp = temp.next_link
       end
-      prev = temp
-      temp = temp.next_link
     end
   end
 
   def display
-    temp = @root.next_link
+    temp = @root
     print "["
     while temp
       print "#{temp.data}"
@@ -45,7 +55,7 @@ class SinglyLinkedList
   end
 
   def include? data
-    temp = @root.next_link
+    temp = @root
     while temp
       if temp.data == data
         return true
@@ -56,17 +66,3 @@ class SinglyLinkedList
   end
 
 end
-
-list = SinglyLinkedList.new
-list.insert_at_start 1
-list.insert_at_start 2
-list.insert_at_start 3
-list.display
-p list.include? 4
-list.insert_at_end 4
-list.insert_at_start 4
-list.insert_at_end 5
-list.display
-p list.include? 4
-list.delete 4
-list.display
